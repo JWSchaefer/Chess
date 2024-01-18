@@ -1,18 +1,22 @@
 use std::panic;
 
-use chess::board::Board;
-use chess::board_utils::constants::pieces;
-use chess::board_utils::constants::positions;
-
-
 use colored::Colorize;
+
+use chess::board_abstract::Board;
+use chess::variations::classic::board::ClassicBoard;
+use chess::variations::classic::positions;
 
 
 fn main() {
     println!("\n");
-    let mut my_board = Board::new();
+    let mut my_board = ClassicBoard::new();
 
     let h_bar = String::from_iter(vec!['—'; 80]).red();
+
+    // println!("{}", "K".white().on_truecolor(128,128,128));
+    // println!("{}", "P".black().on_truecolor(128,128,128));
+    // println!("{}", "K".white().on_truecolor(47,79,79));
+    // println!("{}", "P".black().on_truecolor(47,79,79));
     
     // ————————————————————————————————————————————————————————————————————————————————
     println!("{}", "NULL POSITION".bright_green());
@@ -22,7 +26,7 @@ fn main() {
     let _ = panic::catch_unwind(|| {
         println!("{}", my_board);
     });
-    println!("Overlap: {}", my_board.check_overlap().unwrap_err());
+    println!("Overlap: {}", my_board.check_valid());
     println!("\n");
 
     // ————————————————————————————————————————————————————————————————————————————————
@@ -34,7 +38,7 @@ fn main() {
     let _ = panic::catch_unwind(|| {
         println!("Board: {}", my_board);
     });
-    println!("Overlap: {}", my_board.check_overlap().unwrap());
+    println!("Overlap: {}", my_board.check_valid());
     print!("\n");
 
     // ————————————————————————————————————————————————————————————————————————————————
@@ -44,7 +48,11 @@ fn main() {
     my_board.set_state(positions::DEFAULT);
 
     println!("Board: {}", my_board);
-    println!("Overlap: {}", my_board.check_overlap().unwrap());
+    println!("Overlap: {}", my_board.check_valid());
+    println!("Collapsed State:");
+    
+    let (_,_) = my_board.collapse_state().unwrap();
+    
     println!("\n");
 
     // ————————————————————————————————————————————————————————————————————————————————
@@ -56,35 +64,10 @@ fn main() {
     let _ = panic::catch_unwind(|| {
         println!("Board: {}", my_board);
     });
-    println!("Overlap: {}", my_board.check_overlap().unwrap());
+    println!("Overlap: {}", my_board.check_valid());
     println!("\n");
 
     // ————————————————————————————————————————————————————————————————————————————————
-
-    println!("{}", "PIECES & PIECE LOOKUPS".bright_green());
-    println!("{}", h_bar);
-
-    let pieces_short_name_lookup = pieces::get_piece_short_name_lookup();
-    let pieces_long_name_lookup  = pieces::get_piece_long_name_lookup();
-
-    println!("The chess pieces are: ");
-    print!("{}"  ,pieces_long_name_lookup.get_value(&pieces::K).unwrap());
-    print!(", {}",pieces_long_name_lookup.get_value(&pieces::Q).unwrap());
-    print!(", {}",pieces_long_name_lookup.get_value(&pieces::R).unwrap());
-    print!(", {}",pieces_long_name_lookup.get_value(&pieces::B).unwrap());
-    print!(", {}",pieces_long_name_lookup.get_value(&pieces::N).unwrap());
-    print!(", {}",pieces_long_name_lookup.get_value(&pieces::P).unwrap());
-    println!("\n");
-
-    println!("Their encodings are: "); 
-    print!("{}"  ,pieces_short_name_lookup.get_key(&'K').unwrap());
-    print!(", {}",pieces_short_name_lookup.get_key(&'Q').unwrap());
-    print!(", {}",pieces_short_name_lookup.get_key(&'R').unwrap());
-    print!(", {}",pieces_short_name_lookup.get_key(&'B').unwrap());
-    print!(", {}",pieces_short_name_lookup.get_key(&'N').unwrap());
-    print!(", {}",pieces_short_name_lookup.get_key(&'P').unwrap());
-    print!("\n");
-    println!("{}", h_bar);
 
 
 

@@ -1,1 +1,0 @@
-pub const  N_PIECES : usize = 6;

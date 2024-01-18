@@ -1,4 +1,4 @@
-use crate::board_utils::constants::squares::{*};
+use crate::variations::classic::squares::*;
 
 pub const ONE   : u64 =  A1 | B1 | C1 | D1 | E1 | F1 | G1 | H1;
 pub const TWO   : u64 =  A2 | B2 | C2 | D2 | E2 | F2 | G2 | H2;

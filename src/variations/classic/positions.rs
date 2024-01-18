@@ -1,7 +1,7 @@
-use crate::board_utils::constants::general;
-use crate::board_utils::constants::{ranks, squares::{*}};
 
-pub const EMPTY : [[u64; general::N_PIECES]; 2] = [
+use crate::variations::classic::{ranks, squares::*, pieces};
+
+pub const EMPTY : [[u64; pieces::N_PIECES]; 2] = [
     [ // White
         0, // king
         0, // queen
@@ -20,7 +20,7 @@ pub const EMPTY : [[u64; general::N_PIECES]; 2] = [
     ]
 ];
 
-pub const DEFAULT : [[u64; general::N_PIECES]; 2] = [
+pub const DEFAULT : [[u64; pieces::N_PIECES]; 2] = [
     [ // White
         A5,      // king
         A4,      // queen
@@ -39,22 +39,22 @@ pub const DEFAULT : [[u64; general::N_PIECES]; 2] = [
     ]
 ];
 
-pub const TEST_OVERLAP : [[u64; general::N_PIECES]; 2] = [
+pub const TEST_OVERLAP : [[u64; pieces::N_PIECES]; 2] = [
     [ // White
-        A5,      // king
-        A4,      // queen
+        A5, // king
+        A4, // queen
         A3, // rook
-        A2 , // biship
+        A2, // biship
         A1, // knight
         ranks::H // pawns
     ],
     [ // Black
-        0,      // king
-        0,      // queen
-        0, // rook
-        0 , // biship
+        0,  // king
+        0,  // queen
+        0,  // rook
+        0,  // biship
         A1, // knight
-        ranks::H // pawns
+        0   // pawns
 ]
 ];
 
