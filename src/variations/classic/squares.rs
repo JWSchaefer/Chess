@@ -1,5 +1,6 @@
 pub const N_SQUARES : usize = 64;
 
+
 pub const A1 : u64 = u64::pow(2, 0);
 pub const A2 : u64 = u64::pow(2, 1);
 pub const A3 : u64 = u64::pow(2, 2);

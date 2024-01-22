@@ -11,6 +11,7 @@ pub const EMPTY : [[u64; pieces::N_PIECES]; 2] = [
         0  // pawns
     ],
     [ // Black
+    
         0, // king
         0, // queen
         0, // rook
@@ -41,19 +42,19 @@ pub const DEFAULT : [[u64; pieces::N_PIECES]; 2] = [
 
 pub const TEST_OVERLAP : [[u64; pieces::N_PIECES]; 2] = [
     [ // White
-        A5, // king
-        A4, // queen
-        A3, // rook
-        A2, // biship
-        A1, // knight
-        ranks::H // pawns
+        D4, // king
+        0, // queen
+        0, // rook
+        0, // biship
+        0, // knight
+        0 // pawns
     ],
     [ // Black
         0,  // king
         0,  // queen
         0,  // rook
         0,  // biship
-        A1, // knight
+        D4, // knight
         0   // pawns
 ]
 ];

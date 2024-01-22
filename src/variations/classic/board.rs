@@ -1,8 +1,9 @@
-use crate::board_abstract::Board;
-use crate::variations::classic::pieces::{Pieces, N_PIECES};
-use crate::variations::classic::players::{Players, N_PLAYERS};
-use crate::variations::classic::squares::N_SQUARES;
+use colored::Colorize;
 
+use crate::board_abstract::Board;
+use crate::variations::classic::pieces::{Piece, N_PIECES};
+use crate::variations::classic::players::{Player, N_PLAYERS};
+use crate::variations::classic::squares::N_SQUARES;
 
 pub struct ClassicBoard {
     pub state : Option<[[u64;  N_PIECES]; N_PLAYERS]>
@@ -16,8 +17,13 @@ impl ClassicBoard {
         self.state = Some(state);
     }
 
-    // Calculate Transpose
-    fn _transpose(state : [[u64; N_PIECES]; N_PLAYERS]) -> [u64; N_SQUARES] {
+
+    fn get_transpose(&self) -> [u64; N_SQUARES] {
+        
+        let state = match self.state {
+            Some(state) => {state},
+            None => panic!("Board state not set. Unable to generate transpose.")
+        };
 
         let mut transpose : [u64; N_SQUARES] = [0; N_SQUARES];
 
@@ -29,50 +35,41 @@ impl ClassicBoard {
         }
 
         transpose
-  
-    }
-
-    fn get_transpose(&self) -> Result<[u64; N_SQUARES], &'static str>{
-
-        match self.state {
-            None => Err("Board state not set. Unable to generate transpose."),
-            Some(state) => Ok(Self::_transpose(state))
-        }
 
     }
 
-        // Checks a given transposed state for one or more piece is occupying a given square on the board
-    fn _check_overlap(transpose :  [u64; N_SQUARES]) -> bool{
 
-        let result = transpose
-            .iter()
-            .map(|x| x.count_ones() > 1);
+    // Checks a given transposed state for one or more piece is occupying a given square on the board
+    fn check_overlap(&self) -> bool{
 
-        match result.into_iter().position(|x| x) {
+        match self
+        .get_transpose()
+        .iter()
+        .map(|x| x.count_ones() > 1)
+        .position(|x| x) {
             Some(_) => true,
             None    => false
         }
 
     }
 
-    fn _collapse_state(transpose : [u64; N_SQUARES]) -> ([Pieces; N_SQUARES],[Players;N_SQUARES]) {
-
-        println!("{:?}", transpose);
-
-        ([Pieces::B; N_SQUARES],[Players::W; N_SQUARES])
-
-    }
-
-        // Collapses the bit boards into a single integer encoded array
-    pub fn collapse_state(&self) -> Result<([Pieces; N_SQUARES],[Players; N_SQUARES]), &'static str> {
 
 
-        let transpose =  match self.get_transpose() {
-            Ok(transpose) => transpose,
-            Err(err) => panic!("{}", err)
-        };
+    // Collapses the bit boards into a single integer encoded array
+    pub fn collapse_state_detailed(&self) -> [(Piece, Player); N_SQUARES] {
 
-        Ok(Self::_collapse_state(transpose))
+        self.force_valid();
+    
+        let mut result = [(Piece::NullPiece, Player::NullPlayer); N_SQUARES];
+
+        for (i, &col) in self.get_transpose().iter().enumerate() {
+            result[i] = (
+                Piece::get_piece_from_transpose_column(col),
+                Player::get_player_from_transpose_column(col)
+        )}
+
+        result
+
     }
 
 }
@@ -85,26 +82,62 @@ impl Board for ClassicBoard {
         Self { state : None }
     }
 
+    fn force_valid(&self) {
+        match self.check_overlap() {
+            false => {},
+            true => panic!("Overlap found in board state")
+        };
+    }
 
-    // Checks if one or more piece is occupying a given square on the board
     fn check_valid(&self) -> bool {
-
-        match self.get_transpose(){
-            Err(err) => panic!("{}", err),
-            Ok(transpose) => Self::_check_overlap(transpose)
-        }
-
-
+        return self.check_overlap();
     }
 
 
 }
 
 impl std::fmt::Display for ClassicBoard {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        match self.check_valid() {
-            false => {write!(f, "This is a test")},
-            true => {panic!("Overlaps found in board state")},
+    fn fmt(&self, f: &mut std::fmt::Formatter) ->  std::fmt::Result {
+
+        self .force_valid();
+
+        let _state = self.collapse_state_detailed();
+
+        let state : Vec<_> = _state.chunks(8).rev().collect(); 
+
+        let square_colors = [(128,128,128), (79,79,79)];
+        let piece_colours = [(255,255,255), (0, 0, 0)];
+
+        for (i,row) in state.iter().enumerate() {
+            for (j, (piece, player)) in row.iter().enumerate(){
+
+                let (sr,sg,sb) = square_colors[(i  + j) % 2];
+
+                let (pr,pg,pb) = match *player as usize {
+                    0 => piece_colours[0],
+                    1 => piece_colours[1],
+                    _ => {print!("{}", format!(" {} ", piece.get_short_name()).on_truecolor(sr, sg, sb)); continue}
+                };
+
+                print!("{}", 
+                format!(" {} ", piece.get_short_name())
+                .on_truecolor(sr, sg, sb)
+                .truecolor(pr, pg, pb)
+            );
+            }
+
+        if i < 7 {
+            print!("\n");
         }
+        
+        }
+
+
+
+    
+        
+
+
+        write!(f,"")
     }
 }

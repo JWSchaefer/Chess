@@ -1,17 +1,21 @@
+use super::pieces::N_PIECES;
+
 #[derive(Copy, Clone)]
-pub enum Players {
+pub enum Player {
     W,
     B,
-    _NPlayers
+    NullPlayer
 }
 
-pub const N_PLAYERS: usize = Players::_NPlayers as usize;
+pub const N_PLAYERS: usize = Player::NullPlayer as usize;
 
-impl Players {
+pub const AS_ARRAY : [Player; N_PLAYERS] = [Player::W, Player::B];
+
+impl Player {
 
     pub fn get_encoding(&self) -> usize {
         match self {
-            Players::_NPlayers =>  panic!("_NPlayers is not a valid player"),
+            Player::NullPlayer =>  panic!("NullPlayer is not a valid player"),
             other => *other as usize
         }
        
@@ -19,33 +23,39 @@ impl Players {
 
     pub fn get_short_name(&self) -> char {
         match self {
-            Players::W => 'W',
-            Players::B => 'B',
-            _ => panic!("_NPlayers is not a valid player")
+            Player::W => 'W',
+            Player::B => 'B',
+            Player::NullPlayer => panic!("NullPlayer is not a valid player")
         }
     }
 
     pub fn get_long_name(&self) -> &'static str {
         match self {
-            Players::W => "White",
-            Players::B => "Black",
-            _ => panic!("_NPlayers is not a valid player")
+            Player::W => "White",
+            Player::B => "Black",
+            Player::NullPlayer => panic!("NullPlayer is not a valid player")
         }
     }
 
-    pub fn get_piece_from_encoding(encode: usize) -> Players {
+    pub fn get_piece_from_encoding(encode: usize) -> Player {
         match encode {
-            0 => Players::W,
-            1 => Players::B,
+            0 => Player::W,
+            1 => Player::B,
             _ => panic!("Invalid encoding {} used.", encode)
         }
     }
 
-    pub fn as_array() -> [Players; N_PLAYERS] {[
-            Players::W,
-            Players::B
-        ]
+    pub fn get_player_from_transpose_column(column : u64) -> Player {
+
+        match column {
+            0 => Player::NullPlayer,
+            _ => AS_ARRAY[column.trailing_zeros() as usize / N_PIECES]
+        }
+
+
     }
+
+
 
 }
 

@@ -1,75 +1,76 @@
 #[derive(Copy, Clone)]
-pub enum Pieces {
+pub enum Piece {
     K,
     Q,
     R,
     B,
     N,
     P,
-    _NPieces
+    NullPiece
 }
 
-pub const N_PIECES: usize = Pieces::_NPieces as usize;
 
-impl Pieces {
+pub const N_PIECES: usize = Piece::NullPiece as usize;
+
+pub const AS_ARRAY : [Piece; N_PIECES] = [Piece::K, Piece::Q, Piece::R, Piece::B, Piece::N, Piece::P];
+
+impl Piece {
 
     pub fn get_encoding(&self) -> usize {
         match self {
-            Pieces::_NPieces => panic!("_NPieces is not a valid piece"),
+            Piece::NullPiece => panic!("NullPiece is not a valid piece"),
             other => *other as usize,
         }
     }
 
+
     pub fn get_short_name(&self) -> char {
         match self {
-            Pieces::K => 'K',
-            Pieces::Q => 'Q',
-            Pieces::R => 'R',
-            Pieces::B => 'B',
-            Pieces::N => 'N',
-            Pieces::P => 'P',
-            _ => panic!("_NPieces is not a valid piece")
+            Piece::K => 'K',
+            Piece::Q => 'Q',
+            Piece::R => 'R',
+            Piece::B => 'B',
+            Piece::N => 'N',
+            Piece::P => 'P',
+            Piece::NullPiece => ' '
         }
     }
 
     pub fn get_long_name(&self) -> &'static str {
         match self {
-            Pieces::K => "King",
-            Pieces::Q => "Queen",
-            Pieces::R => "Rook",
-            Pieces::B => "Bishop",
-            Pieces::N => "Night",
-            Pieces::P => "Pawn",
-            _ => panic!("_NPieces is not a valid piece")
+            Piece::K => "King",
+            Piece::Q => "Queen",
+            Piece::R => "Rook",
+            Piece::B => "Bishop",
+            Piece::N => "Night",
+            Piece::P => "Pawn",
+            Piece::NullPiece => "NONE"
         }
     }
 
-    pub fn get_piece_from_encoding(encode: usize) -> Pieces {
+    pub fn get_piece_from_encoding(encode: usize) -> Piece {
         match encode {
-            0 => Pieces::K,
-            1 => Pieces::Q,
-            2 => Pieces::R,
-            3 => Pieces::B,
-            4 => Pieces::N,
-            5 => Pieces::P,
+            0 => Piece::K,
+            1 => Piece::Q,
+            2 => Piece::R,
+            3 => Piece::B,
+            4 => Piece::N,
+            5 => Piece::P,
             _ => panic!("Invalid encoding {} used.", encode)
         }
     }
 
-    pub fn as_array() -> [Pieces; N_PIECES] {[
-            Pieces::K,
-            Pieces::Q,
-            Pieces::R,
-            Pieces::B,
-            Pieces::N,
-            Pieces::P
-        ]
+    pub fn get_piece_from_transpose_column(column : u64) -> Piece {
+
+        match column {
+            0 => Piece::NullPiece,
+            _ => AS_ARRAY[column.trailing_zeros() as usize % N_PIECES]
+        }
+
+
     }
 
+
 }
-
-
-
-
-
+    
 
